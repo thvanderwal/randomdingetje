@@ -9,9 +9,13 @@
     --text-muted: #8b7355;
     --border-color: #6d4c3d;
     --accent-primary: #8b0000;
+    --accent-primary-hover: #6b0000;
     --accent-secondary: #daa520;
+    --accent-secondary-hover: #b8860b;
     --accent-danger: #5c0000;
+    --accent-danger-hover: #3d0000;
     --accent-info: #8b7355;
+    --accent-info-hover: #7b6345;
     --accent-warning: #cd853f;
     --rating-color: #daa520;
     --shadow-color: rgba(0, 0, 0, 0.6);
@@ -27,9 +31,13 @@
     --text-muted: #7b6345;
     --border-color: #5d3c2d;
     --accent-primary: #6b0000;
+    --accent-primary-hover: #5c0000;
     --accent-secondary: #b8860b;
+    --accent-secondary-hover: #9a7209;
     --accent-danger: #4c0000;
+    --accent-danger-hover: #3d0000;
     --accent-info: #7b6345;
+    --accent-info-hover: #6b5335;
     --accent-warning: #bd7530;
     --rating-color: #b8860b;
     --shadow-color: rgba(0, 0, 0, 0.8);
@@ -372,7 +380,7 @@ header p {
 }
 
 .btn-primary:hover {
-    background: #6b0000;
+    background: var(--accent-primary-hover);
     box-shadow: 
         0 6px 12px var(--shadow-color),
         inset 0 0 20px rgba(218, 165, 32, 0.3),
@@ -382,12 +390,12 @@ header p {
 
 .btn-secondary {
     background: var(--accent-secondary);
-    color: #1a0a0f;
+    color: var(--bg-secondary);
     border-color: var(--accent-secondary);
 }
 
 .btn-secondary:hover {
-    background: #b8860b;
+    background: var(--accent-secondary-hover);
     box-shadow: 
         0 6px 12px var(--shadow-color),
         0 0 15px rgba(218, 165, 32, 0.4);
@@ -396,11 +404,11 @@ header p {
 .btn-danger {
     background: var(--accent-danger);
     color: var(--accent-secondary);
-    border-color: #3d0000;
+    border-color: var(--accent-danger-hover);
 }
 
 .btn-danger:hover {
-    background: #3d0000;
+    background: var(--accent-danger-hover);
     box-shadow: 
         0 6px 12px var(--shadow-color),
         0 0 15px rgba(92, 0, 0, 0.5);
@@ -413,7 +421,7 @@ header p {
 }
 
 .btn-info:hover {
-    background: #7b6345;
+    background: var(--accent-info-hover);
     box-shadow: 0 6px 12px var(--shadow-color);
 }
 
