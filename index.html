@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mijn Spellen Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎲 Mijn Spellen Tracker</h1>
+            <p>Houd bij welke spellen je hebt en hoe vaak je ze speelt</p>
+        </header>
+
+        <main>
+            <!-- Add Game Section -->
+            <section class="card">
+                <h2>Nieuw Spel Toevoegen</h2>
+                <form id="addGameForm">
+                    <div class="form-group">
+                        <label for="gameName">Spelnaam:</label>
+                        <input type="text" id="gameName" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Spel Toevoegen</button>
+                </form>
+            </section>
+
+            <!-- Games List Section -->
+            <section class="card">
+                <h2>Mijn Spellen</h2>
+                <div id="gamesList"></div>
+            </section>
+
+            <!-- Add Play Session Modal -->
+            <div id="playSessionModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Speelsessie Toevoegen</h2>
+                    <form id="addPlaySessionForm">
+                        <input type="hidden" id="sessionGameId">
+                        <div class="form-group">
+                            <label for="playDate">Datum:</label>
+                            <input type="date" id="playDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="winner">Winnaar (optioneel):</label>
+                            <input type="text" id="winner">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notities (optioneel):</label>
+                            <textarea id="notes" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sessie Opslaan</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Game Details Modal -->
+            <div id="gameDetailsModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div id="gameDetailsContent"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
