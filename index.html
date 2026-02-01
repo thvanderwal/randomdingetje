@@ -1,69 +1,311 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mijn Spellen Tracker</title>
+    <meta name="description" content="Track your board game collection and play sessions offline">
+    <meta name="theme-color" content="#667eea">
+    <title>Board Game Collection Tracker</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
     <div class="container">
+        <!-- Header with theme toggle -->
         <header>
-            <h1>🎲 Mijn Spellen Tracker</h1>
-            <p>Houd bij welke spellen je hebt en hoe vaak je ze speelt</p>
+            <div class="header-content">
+                <h1>🎲 Board Game Collection Tracker</h1>
+                <p>Track your collection and play sessions offline</p>
+            </div>
+            <div class="header-actions">
+                <button id="themeToggle" class="btn btn-icon" aria-label="Toggle dark/light theme" title="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
         </header>
 
+        <!-- Navigation tabs -->
+        <nav class="tabs" role="tablist" aria-label="Main navigation">
+            <button class="tab active" data-tab="collection" role="tab" aria-selected="true" aria-controls="collectionPanel">
+                📚 Collection
+            </button>
+            <button class="tab" data-tab="sessions" role="tab" aria-selected="false" aria-controls="sessionsPanel">
+                🎮 Play Sessions
+            </button>
+            <button class="tab" data-tab="statistics" role="tab" aria-selected="false" aria-controls="statisticsPanel">
+                📊 Statistics
+            </button>
+            <button class="tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="settingsPanel">
+                ⚙️ Settings
+            </button>
+        </nav>
+
         <main>
-            <!-- Add Game Section -->
-            <section class="card">
-                <h2>Nieuw Spel Toevoegen</h2>
-                <form id="addGameForm">
-                    <div class="form-group">
-                        <label for="gameName">Spelnaam:</label>
-                        <input type="text" id="gameName" required>
+            <!-- Collection Panel -->
+            <section id="collectionPanel" class="panel active" role="tabpanel" aria-labelledby="Collection">
+                <!-- Search and Filter -->
+                <div class="card search-filter-card">
+                    <div class="search-filter-row">
+                        <div class="search-box">
+                            <label for="searchGames" class="sr-only">Search games</label>
+                            <input type="text" id="searchGames" placeholder="🔍 Search games..." aria-label="Search games">
+                        </div>
+                        <div class="filter-controls">
+                            <label for="filterStatus" class="sr-only">Filter by status</label>
+                            <select id="filterStatus" aria-label="Filter by ownership status">
+                                <option value="all">All Games</option>
+                                <option value="owned">Owned</option>
+                                <option value="wishlist">Wishlist</option>
+                                <option value="previously-owned">Previously Owned</option>
+                            </select>
+                            <label for="sortGames" class="sr-only">Sort games</label>
+                            <select id="sortGames" aria-label="Sort games by">
+                                <option value="title">Sort: Title</option>
+                                <option value="rating">Sort: Rating</option>
+                                <option value="playTime">Sort: Play Time</option>
+                                <option value="plays">Sort: Most Played</option>
+                                <option value="lastPlayed">Sort: Last Played</option>
+                            </select>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Spel Toevoegen</button>
-                </form>
+                </div>
+
+                <!-- Add Game Button -->
+                <div class="action-bar">
+                    <button id="addGameBtn" class="btn btn-primary btn-large">
+                        ➕ Add New Game
+                    </button>
+                </div>
+
+                <!-- Games List -->
+                <div id="gamesList" class="games-grid"></div>
             </section>
 
-            <!-- Games List Section -->
-            <section class="card">
-                <h2>Mijn Spellen</h2>
-                <div id="gamesList"></div>
+            <!-- Play Sessions Panel -->
+            <section id="sessionsPanel" class="panel" role="tabpanel" aria-labelledby="Play Sessions" hidden>
+                <div class="action-bar">
+                    <button id="quickPlayBtn" class="btn btn-primary btn-large">
+                        ⚡ Quick Log Play
+                    </button>
+                </div>
+                
+                <!-- Recent Sessions -->
+                <div class="card">
+                    <h2>Recent Play Sessions</h2>
+                    <div id="recentSessions"></div>
+                </div>
             </section>
 
-            <!-- Add Play Session Modal -->
-            <div id="playSessionModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>Speelsessie Toevoegen</h2>
-                    <form id="addPlaySessionForm">
-                        <input type="hidden" id="sessionGameId">
-                        <div class="form-group">
-                            <label for="playDate">Datum:</label>
-                            <input type="date" id="playDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="winner">Winnaar (optioneel):</label>
-                            <input type="text" id="winner">
-                        </div>
-                        <div class="form-group">
-                            <label for="notes">Notities (optioneel):</label>
-                            <textarea id="notes" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Sessie Opslaan</button>
-                    </form>
+            <!-- Statistics Panel -->
+            <section id="statisticsPanel" class="panel" role="tabpanel" aria-labelledby="Statistics" hidden>
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <h3>📚 Collection Overview</h3>
+                        <div id="collectionStats"></div>
+                    </div>
+                    <div class="card stat-card">
+                        <h3>🎮 Most Played Games</h3>
+                        <div id="mostPlayedGames"></div>
+                    </div>
+                    <div class="card stat-card">
+                        <h3>👥 Frequent Players</h3>
+                        <div id="frequentPlayers"></div>
+                    </div>
+                    <div class="card stat-card">
+                        <h3>📅 Play History</h3>
+                        <div id="playHistory"></div>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Game Details Modal -->
-            <div id="gameDetailsModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <div id="gameDetailsContent"></div>
+            <!-- Settings Panel -->
+            <section id="settingsPanel" class="panel" role="tabpanel" aria-labelledby="Settings" hidden>
+                <div class="card">
+                    <h2>Data Management</h2>
+                    <p class="help-text">Your data is stored locally in your browser. Use export/import to backup or transfer your data.</p>
+                    <div class="settings-actions">
+                        <button id="exportDataBtn" class="btn btn-secondary">
+                            📤 Export Data (JSON)
+                        </button>
+                        <label class="btn btn-secondary file-input-label">
+                            📥 Import Data (JSON)
+                            <input type="file" id="importDataInput" accept=".json" class="sr-only">
+                        </label>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="card">
+                    <h2>About</h2>
+                    <p>Board Game Collection Tracker v1.0</p>
+                    <p>A lightweight, offline-first web application for tracking your board game collection and play sessions.</p>
+                    <p class="help-text">Works entirely in your browser - no server required!</p>
+                </div>
+            </section>
         </main>
+
+        <!-- Add/Edit Game Modal -->
+        <div id="gameModal" class="modal" role="dialog" aria-labelledby="gameModalTitle" aria-modal="true">
+            <div class="modal-content modal-large">
+                <button class="close" aria-label="Close modal">&times;</button>
+                <h2 id="gameModalTitle">Add New Game</h2>
+                <form id="gameForm">
+                    <input type="hidden" id="gameId">
+                    
+                    <div class="form-row">
+                        <div class="form-group form-group-large">
+                            <label for="gameTitle">Title *</label>
+                            <input type="text" id="gameTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameYear">Year Published</label>
+                            <input type="number" id="gameYear" min="1900" max="2100">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gameDesigner">Designer(s)</label>
+                            <input type="text" id="gameDesigner" placeholder="e.g., Uwe Rosenberg">
+                        </div>
+                        <div class="form-group">
+                            <label for="gamePublisher">Publisher</label>
+                            <input type="text" id="gamePublisher" placeholder="e.g., Z-Man Games">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gameMinPlayers">Min Players</label>
+                            <input type="number" id="gameMinPlayers" min="1" max="99" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="gameMaxPlayers">Max Players</label>
+                            <input type="number" id="gameMaxPlayers" min="1" max="99" value="4">
+                        </div>
+                        <div class="form-group">
+                            <label for="gamePlayTime">Play Time (min)</label>
+                            <input type="number" id="gamePlayTime" min="1" placeholder="60">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gameComplexity">Complexity (1-5)</label>
+                            <input type="number" id="gameComplexity" min="1" max="5" step="0.1" placeholder="2.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="gameRating">Your Rating (1-10)</label>
+                            <input type="number" id="gameRating" min="1" max="10" step="0.5" placeholder="7.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="gameStatus">Status</label>
+                            <select id="gameStatus">
+                                <option value="owned">Owned</option>
+                                <option value="wishlist">Wishlist</option>
+                                <option value="previously-owned">Previously Owned</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gameCategories">Categories/Mechanics</label>
+                            <input type="text" id="gameCategories" placeholder="e.g., Worker Placement, Strategy">
+                        </div>
+                        <div class="form-group">
+                            <label for="gameAcquisitionDate">Acquisition Date</label>
+                            <input type="date" id="gameAcquisitionDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gameImageUrl">Box Art URL (optional)</label>
+                        <input type="url" id="gameImageUrl" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gameNotes">Notes</label>
+                        <textarea id="gameNotes" rows="3" placeholder="Personal notes about this game..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelGameBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Game</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Play Session Modal -->
+        <div id="playSessionModal" class="modal" role="dialog" aria-labelledby="playSessionModalTitle" aria-modal="true">
+            <div class="modal-content">
+                <button class="close" aria-label="Close modal">&times;</button>
+                <h2 id="playSessionModalTitle">Log Play Session</h2>
+                <form id="playSessionForm">
+                    <input type="hidden" id="sessionId">
+                    <input type="hidden" id="sessionGameId">
+                    
+                    <div class="form-group">
+                        <label for="sessionGame">Game *</label>
+                        <select id="sessionGame" required>
+                            <option value="">Select a game...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sessionDate">Date *</label>
+                            <input type="date" id="sessionDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sessionDuration">Duration (min)</label>
+                            <input type="number" id="sessionDuration" min="1" placeholder="60">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sessionPlayers">Players (comma-separated)</label>
+                        <input type="text" id="sessionPlayers" placeholder="e.g., Alice, Bob, Charlie">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sessionWinners">Winner(s) (comma-separated)</label>
+                        <input type="text" id="sessionWinners" placeholder="e.g., Alice">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sessionNotes">Notes</label>
+                        <textarea id="sessionNotes" rows="3" placeholder="Session notes..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSessionBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Session</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Game Details Modal -->
+        <div id="gameDetailsModal" class="modal" role="dialog" aria-labelledby="gameDetailsTitle" aria-modal="true">
+            <div class="modal-content modal-large">
+                <button class="close" aria-label="Close modal">&times;</button>
+                <div id="gameDetailsContent"></div>
+            </div>
+        </div>
+
+        <!-- Confirm Dialog -->
+        <div id="confirmModal" class="modal" role="alertdialog" aria-labelledby="confirmTitle" aria-modal="true">
+            <div class="modal-content modal-small">
+                <h2 id="confirmTitle">Confirm</h2>
+                <p id="confirmMessage"></p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="confirmCancel">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmOk">Delete</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
